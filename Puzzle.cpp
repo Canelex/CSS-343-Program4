@@ -1,5 +1,15 @@
+/*
+* Puzzle.h/cpp
+* Timothy Kozlov, Eric Pham
+* 3/6/2021
+*
+* This interface provides a set of methods that are implemented by subclasses
+* and can be used by Fitness objects to evaluate the puzzle and Reproduction
+* objects to mutate the puzzle. Puzzles will be instantiated using a
+* PuzzleFactory singleton and stored inside a Population object.
+*/
+
 #include "Puzzle.h"
-using namespace std;
 
 /*
 * This method will be implemented by Puzzle.cpp and will just call the
