@@ -24,7 +24,7 @@ public:
    * This copy constructor copies the data_ and fixed_ arrays from another sudoku
    * object. This is used by SudokuOffspring to clone and mutate.
    */
-   Sudoku(Sudoku& other);
+   Sudoku(const Sudoku& other);
 
    /*
    * This method is an implementation from the Puzzle interface. It accepts an

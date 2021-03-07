@@ -22,7 +22,7 @@ Sudoku::Sudoku() : data_{ 0 }, fixed_{ false } { }
 * This copy constructor copies the data_ and fixed_ arrays from another sudoku
 * object. This is used by SudokuOffspring to clone and mutate.
 */
-Sudoku::Sudoku(Sudoku& other) {
+Sudoku::Sudoku(const Sudoku& other) {
    // Loop invariant: 0 <= row < data_.length_
    for (int row = 0; row < 9; row++) {
       // Loop invariant: 0 <= col < data_[row].length_
