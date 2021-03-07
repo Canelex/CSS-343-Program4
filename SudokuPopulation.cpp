@@ -8,6 +8,7 @@
 
 #include "SudokuPopulation.h"
 #include "SudokuFitness.h"
+#include "SudokuOffspring.h"
 
 /*
 * The constructor will copy size into size_ and instantiates puzzles_
@@ -19,22 +20,15 @@ SudokuPopulation::SudokuPopulation(Sudoku original, int size) {
    // Create size random versions of original
    for (int i = 0; i < size; i++) {
       // TODO: use fillPuzzle
-      // TODO: delete this
-      Sudoku copy = Sudoku(original);
-      for (int row = 0; row < 9; row++) {
-         for (int col = 0; col < 9; col++) {
-            int randnum = (rand() % 9) + 1;
-            //if (copy.getDigitAt(row, col) == 0) {
-            //   cout << "Changing 0 to a " << randnum << endl;
-            //}
-            copy.setDigitAt(row, col, randnum);
-         }
-      }
+      SudokuOffspring repro = repro.getInstance();
+
+      Sudoku* copy = (Sudoku*) repro.makeOffspring(original);
+
       // Get SudokuFitness singleton
       SudokuFitness fitness = fitness.getInstance();
 
       //cout << fitness.howFit(copy) << " " << endl;
-      puzzles_.push_back(copy);
+      puzzles_.push_back(*copy);
    }
 
    // Copy size
