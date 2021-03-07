@@ -21,8 +21,8 @@ public:
    Sudoku();
 
    /*
-   * This is the default constructor. It represents a completely empty puzzle
-   * with data_ all set to 0 and fixed_ all set to false (default values)
+   * This copy constructor copies the data_ and fixed_ arrays from another sudoku
+   * object. This is used by SudokuOffspring to clone and mutate.
    */
    Sudoku(Sudoku& other);
 
@@ -32,14 +32,14 @@ public:
    * of 81 digits. Any digit but zero is considered “fixed” and cannot be changed
    * in the future (set fixed_[i] to true).
    */
-   istream& readPuzzle(const istream& is);
+   istream& readPuzzle(istream& is);
 
    /*
    * This method is an implementation from the Puzzle interface. It prints to 
    * cout the current puzzle + solution using the format described in the 
    * specifications.
    */
-   ostream& writePuzzle(const ostream& os) const;
+   ostream& writePuzzle(ostream& os) const;
 
    /*
    * This method returns the digit stored at row and col in the data_.

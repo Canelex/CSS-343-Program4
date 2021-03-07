@@ -21,14 +21,14 @@ public:
    * It accepts an istream and reads values into the puzzle. Returns same
    * istream object.
    */
-   virtual istream& readPuzzle(const istream& is) = 0;
+   virtual istream& readPuzzle(istream& is) = 0;
 
    /*
    * This method is pure virtual and should be8 implemented by the subclass.
    * It accepts an ostream and prints the puzzle to cout with a format.
    * Returns same ostream object.
    */
-   virtual ostream& writePuzzle(const ostream& os) const = 0;
+   virtual ostream& writePuzzle(ostream& os) const = 0;
 
    /*
    * This method will be implemented by Puzzle.cpp and will just call the
