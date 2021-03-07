@@ -23,6 +23,13 @@ public:
    SudokuPopulation(Sudoku original, int size);
 
    /*
+   * The destructor will loop through each puzzle in the puzzles_ vector
+   * and deallocate it. This wasn't originally necessary but since now
+   * the program uses dynamic allocation, now it is.
+   */
+   ~SudokuPopulation();
+
+   /*
    * This method is an implementation from the Population interface and
    * will calculate the fitness score of each element in the puzzles_ vector
    * using the SudokuFitness singleton and then remove the (size_ * percent)
@@ -71,7 +78,7 @@ private:
    /*
    * This field stores all the puzzles that are part of the current generation.
    */
-   vector<Sudoku> puzzles_;
+   vector<Sudoku*> puzzles_;
 
    /*
    * This field stores all the puzzles that are part of the current generation.

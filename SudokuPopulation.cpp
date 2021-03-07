@@ -8,7 +8,7 @@
 
 #include "SudokuPopulation.h"
 #include "SudokuFitness.h"
-#include "SudokuOffspring.h"
+#include "SudokuFactory.h"
 
 /*
 * The constructor will copy size into size_ and instantiates puzzles_
@@ -17,22 +17,35 @@
 * vector.
 */
 SudokuPopulation::SudokuPopulation(Sudoku original, int size) {
+   // Get the SudokuFactory
+   SudokuFactory factory = factory.getInstance();
+
    // Create size random versions of original
    for (int i = 0; i < size; i++) {
-      // TODO: use fillPuzzle
-      SudokuOffspring repro = repro.getInstance();
-
-      Sudoku* copy = (Sudoku*) repro.makeOffspring(original);
-
-      // Get SudokuFitness singleton
-      SudokuFitness fitness = fitness.getInstance();
-
-      //cout << fitness.howFit(copy) << " " << endl;
-      puzzles_.push_back(*copy);
+      // Copy and fill sudoku with random solution
+      Sudoku* copy = (Sudoku*) factory.fillPuzzle(original);
+      // Add it to the generation
+      puzzles_.push_back(copy);
    }
 
    // Copy size
    size_ = size;
+}
+
+/*
+* The destructor will loop through each puzzle in the puzzles_ vector
+* and deallocate it. This wasn't originally necessary but since now
+* the program uses dynamic allocation, now it is.
+*/
+SudokuPopulation::~SudokuPopulation() {
+   // Deallocate each pointer
+   for (int i = 0; i < puzzles_.size(); i++) {
+      //cout << "Deallocated a puzzle" << endl;
+      delete puzzles_[i];
+   }
+
+   // Clear vector
+   puzzles_.clear();
 }
 
 /*
@@ -46,7 +59,22 @@ void SudokuPopulation::cull(double percent) {
    // Get SudokuFitness singleton
    SudokuFitness fitness = fitness.getInstance();
 
-   // TODO: remove puzzles
+   // Calculate how many sudokus should be removed
+   int numToRemove = int(floor(size_ * percent));
+
+   if (numToRemove >= puzzles_.size()) {
+      throw runtime_error("Trying to cull more puzzles than there are.");
+   }
+
+   /*
+   * fitness.howFit(puzzle) => fitness
+   * *puzzles_[i] => convert pointer to object
+   */
+
+   // Remove that many sudokus.
+   for (int i = 0; i < numToRemove; i++) {
+      // todo print "removed puzzle with this fitness"
+   }
 }
 
 /*
@@ -85,7 +113,7 @@ Puzzle* SudokuPopulation::bestIndividual() const {
    int bestIndex = bestPuzzle().first;
 
    // Return dynamic copy of puzzle with best index (needs delete later)
-   return new Sudoku(puzzles_[bestIndex]);
+   return puzzles_[bestIndex];
 }
 
 /*
@@ -111,7 +139,7 @@ pair<int, int> SudokuPopulation::bestPuzzle() const {
    // Use a for loop to calculate best score
    for (int i = 0; i < puzzles_.size(); i++) {
       // Calculate score of current puzzle
-      int score = fitness.howFit(puzzles_[i]);
+      int score = fitness.howFit(*puzzles_[i]);
 
       // If score is better, update it
       if (bestScore == -1 || score < bestScore) {

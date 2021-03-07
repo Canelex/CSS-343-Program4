@@ -22,8 +22,11 @@ int main() {
    SudokuFitness fitness = fitness.getInstance();
    cout << "Fitness: " << fitness.howFit(sudoku) << endl;
 
-   SudokuPopulation pop(sudoku, 500000);
+   SudokuPopulation pop(sudoku, 500);
    cout << "Best variation:" << endl;
    cout << *pop.bestIndividual() << endl;
    cout << "Fitness: " << pop.bestFitness() << endl;
+
+   cout << "Removing 90% of population." << endl;
+   pop.cull(0.9);
 }
