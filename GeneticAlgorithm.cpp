@@ -1,5 +1,7 @@
 #include <iostream>
 #include "Sudoku.h"
+#include "Fitness.h"
+#include "SudokuFitness.h";
 
 using namespace std;
 
@@ -14,5 +16,8 @@ int main() {
    cin >> sudoku;
 
    cout << "Here is your sudoku:" << endl;
-   cout << sudoku;
+   cout << sudoku << endl;
+
+   SudokuFitness fitness = fitness.getInstance();
+   cout << "Fitness: " << fitness.howFit(sudoku) << endl;
 }
