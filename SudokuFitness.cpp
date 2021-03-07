@@ -1,15 +1,20 @@
-#include "SudokuFitness.h"
-#include "Sudoku.h"
-
 /*
-* Sample sudokus and expected fitness counts
+* SudokuFitness.h/cpp
+* Timothy Kozlov, Eric Pham
+* 3/6/2021
+*
+* This class implements the Fitness interface. It follows the singleton
+* pattern and is used to evaluate the “fitness” of Sudoku puzzles.
 * 
+* Sample sudokus and expected fitness counts:
 * 528974613916238475743165982391827546274653198685491327867519234459382761132746859 => 0
 * 328974613916238475743165982391827546274653198685491327867519234459382761132746859 => 3
 * 328974613916238475743165982391827546274653198685491327867519234459382761132746858 => 6
-* 111111111111111111111111111111111111111111111111111111111111111111111111111111111 => 216 
-* (8 per row, 8 per col, 8 per cube)
+* 111111111111111111111111111111111111111111111111111111111111111111111111111111111 => 216
 */
+
+#include "SudokuFitness.h"
+#include "Sudoku.h"
 
 /*
 * This singleton method returns the current instance of the class.

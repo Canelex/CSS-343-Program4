@@ -1,3 +1,11 @@
+/*
+* SudokuPopulation.h/cpp
+* Timothy Kozlov, Eric Pham
+*
+* This class implements the Population interface. It acts as a container
+* for Sudoku puzzle objects.
+*/
+
 #include "SudokuPopulation.h"
 #include "SudokuFitness.h"
 
@@ -112,7 +120,6 @@ Puzzle* SudokuPopulation::bestIndividual() const {
       }
    }
 
-   // Return puzzle with best index
-   // TODO: could this be a problem if puzzles_[bestIndex] goes out of scope?
-   return (Puzzle*) &puzzles_[bestIndex];
+   // Return dynamic copy of puzzle with best index (needs delete later)
+   return new Sudoku(puzzles_[bestIndex]);
 }
