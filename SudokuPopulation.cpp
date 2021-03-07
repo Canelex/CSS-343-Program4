@@ -68,24 +68,10 @@ void SudokuPopulation::newGeneration() {
 * (lowest) fitness score encountered.
 */
 int SudokuPopulation::bestFitness() const {
-   // Get SudokuFitness singleton
-   SudokuFitness fitness = fitness.getInstance();
+   // Get the best score
+   int bestScore = bestPuzzle().second;
 
-   // Int to keep track of best score.
-   int bestScore = -1;
-
-   // Use a for loop to calculate best score
-   for (int i = 0; i < puzzles_.size(); i++) {
-      // Calculate score of current puzzle
-      int score = fitness.howFit(puzzles_[i]);
-
-      // If score is better, update it
-      if (bestScore == -1 || score < bestScore) {
-         bestScore = score;
-      }
-   }
-
-   // Return best score
+   // Return the best fitness.
    return bestScore;
 }
 
@@ -95,6 +81,26 @@ int SudokuPopulation::bestFitness() const {
 * puzzle with the best (lowest) fitness score.
 */
 Puzzle* SudokuPopulation::bestIndividual() const {
+   // Get the best index
+   int bestIndex = bestPuzzle().first;
+
+   // Return dynamic copy of puzzle with best index (needs delete later)
+   return new Sudoku(puzzles_[bestIndex]);
+}
+
+/*
+* This is a helper method to reduce the amount of redundant code. It is used
+* by both bestFitness and bestIndividual to calculate the puzzle with the least
+* weight.
+*
+* Returns a pair <index in puzzles_, fitness> of the best puzzle
+*/
+pair<int, int> SudokuPopulation::bestPuzzle() const {
+   // Check that there is at least one puzzle
+   if (puzzles_.size() <= 0) {
+      throw runtime_error("Tried to get best puzzle in empty population");
+   }
+
    // Get SudokuFitness singleton
    SudokuFitness fitness = fitness.getInstance();
 
@@ -114,6 +120,6 @@ Puzzle* SudokuPopulation::bestIndividual() const {
       }
    }
 
-   // Return dynamic copy of puzzle with best index (needs delete later)
-   return new Sudoku(puzzles_[bestIndex]);
+   // Return pair of best index and best score
+   return make_pair(bestIndex, bestScore);
 }

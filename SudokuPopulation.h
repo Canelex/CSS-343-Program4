@@ -60,6 +60,15 @@ public:
 
 private:
    /*
+   * This is a helper method to reduce the amount of redundant code. It is used
+   * by both bestFitness and bestIndividual to calculate the puzzle with the least
+   * weight.
+   * 
+   * Returns a pair <index in puzzles_, fitness> of the best puzzle
+   */
+   pair<int, int> bestPuzzle() const;
+
+   /*
    * This field stores all the puzzles that are part of the current generation.
    */
    vector<Sudoku> puzzles_;
