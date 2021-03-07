@@ -29,12 +29,14 @@ public:
    * This method uses a Fitness strategy to calculate and return the best (lowest)
    * fitness score encountered. Pure virtual method -- implemented by child class.
    */
-   virtual int bestFitnes() = 0;
+   virtual int bestFitness() const = 0;
 
    /*
    * This method uses a Fitness strategy to calculate and return the puzzle with
    * the best (lowest) fitness score. Pure virtual method -- implemented by child
    * class.
+   * 
+   * This class dynamically allocates the Puzzle copy
    */
-   virtual Puzzle bestIndividual() = 0;
+   virtual Puzzle* bestIndividual() const = 0;
 };

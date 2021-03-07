@@ -1,9 +1,12 @@
 /*
-* Population.h
+* Reproduction.h
 * Timothy Kozlov, Eric Pham
 * 3/6/2021
 *
-* This interface provides two methods that are useful for constructing Puzzle objects.
+* This interface provides a method that is useful for mutating a puzzle.
+* It has only one pure virtual method, which takes in a reference to a
+* puzzle and returns a new puzzle that has been changed. The exact details
+* of how this method works depends on the subclass implementing it.
 */
 
 #pragma once
@@ -12,13 +15,9 @@
 class Reproduction {
 public:
    /*
-   * This pure virtual method accepts an unsolved puzzle and then randomly solves it. 
+   * This pure virtual method takes a reference to a puzzle and returns
+   * a new puzzle that has been changed. The exact details of how this method
+   * works depends on the subclass implementing it.
    */
-   virtual Puzzle fillPuzzle(const Puzzle& unsolved) = 0;
-
-   /*
-   * This pure virtual method accepts a puzzle that has been solved already and then
-   * uses the Reproduction#makeOffspring method to return a new, mutated puzzle.
-   */
-   virtual Puzzle createPuzzle(const Puzzle& solved) = 0;
+   virtual Puzzle* makeOffspring(const Puzzle& puzzle) const = 0;
 };
