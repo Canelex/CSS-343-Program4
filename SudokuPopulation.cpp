@@ -68,16 +68,11 @@ void SudokuPopulation::cull(double percent) {
       throw runtime_error("Trying to cull more puzzles than there are.");
    }
 
-   // Remove that many sudokus.
-   cout << puzzles_.size();
-   // DELETE LATER (TEST METHOD BEFORE CULL FITNESSES)
-   for (int i = 0; i < puzzles_.size(); i++) {
-      cout << "Puzzle fitness before cull: " << fitness.howFit(*puzzles_[i]) << endl;
-   }
    // Bubble sort the vector of Sudoku Puzzles by fitness value
    int tempSize = 0;
+
    // While the number of Sudoku puzzles to remove has not been met, sort the vector
-   while (tempSize < numToRemove) {
+   while (tempSize < puzzles_.size()) {
       // For the number of Sudoku puzzles, sort the vector
       for (int j = 0; j < puzzles_.size() - 1; j++) {
          if (j < 0) {
@@ -91,14 +86,9 @@ void SudokuPopulation::cull(double percent) {
       }
       tempSize++;
    }
+
    // Erase the number of puzzles based on highest fitness values up until the specified percentage
    puzzles_.erase(puzzles_.begin(), puzzles_.end() - numRemaining);
-   // DELETE LATER (TEST METHOD POP SIZE AFTER CULL)
-   cout << "Population size after cull: " << puzzles_.size();
-   // DELETE LATER (TEST METHOD FOR FITNESSES IN THE VECTOR AFTER CULL)
-   for (int i = 0; i < puzzles_.size(); i++) {
-      cout << "Puzzle fitness after cull: " << fitness.howFit(*puzzles_[i]) << endl;
-   }
 }
 
 /*
@@ -115,15 +105,21 @@ void SudokuPopulation::newGeneration() {
    int temp = 0;
    vector<Sudoku*> newPuzzles;
    for (int i = 0; i < size_; i++) {
-      creations.createPuzzle(*puzzles_[temp]);
+      Sudoku* copy = (Sudoku*) creations.createPuzzle(*puzzles_[temp]);
+      newPuzzles.push_back(copy);
+
       temp++;
-      if (i >= puzzles_.size()) {
+      if (temp >= puzzles_.size()) {
          temp = 0;
       }
    }
-   for (int i = 0; i < newPuzzles.size(); i++) {
-      newPuzzles[i] = puzzles_[i];
+
+   // Delete old puzzles
+   for (int i = 0; i < puzzles_.size(); i++) {
+      delete puzzles_[i];
    }
+
+   puzzles_ = newPuzzles;
 }
 
 /*
