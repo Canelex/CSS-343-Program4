@@ -9,6 +9,7 @@
 #include "SudokuPopulation.h"
 #include "SudokuFitness.h"
 #include "SudokuFactory.h"
+#include <cmath>
 
 /*
 * The constructor will copy size into size_ and instantiates puzzles_
@@ -23,7 +24,7 @@ SudokuPopulation::SudokuPopulation(Sudoku original, int size) {
    // Create size random versions of original
    for (int i = 0; i < size; i++) {
       // Copy and fill sudoku with random solution
-      Sudoku* copy = (Sudoku*) factory.fillPuzzle(original);
+      Sudoku* copy = (Sudoku*)factory.fillPuzzle(original);
       // Add it to the generation
       puzzles_.push_back(copy);
    }
@@ -61,19 +62,42 @@ void SudokuPopulation::cull(double percent) {
 
    // Calculate how many sudokus should be removed
    int numToRemove = int(floor(size_ * percent));
+   int numRemaining = puzzles_.size() - numToRemove;
 
    if (numToRemove >= puzzles_.size()) {
       throw runtime_error("Trying to cull more puzzles than there are.");
    }
 
-   /*
-   * fitness.howFit(puzzle) => fitness
-   * *puzzles_[i] => convert pointer to object
-   */
-
    // Remove that many sudokus.
-   for (int i = 0; i < numToRemove; i++) {
-      // todo print "removed puzzle with this fitness"
+   cout << puzzles_.size();
+   // DELETE LATER (TEST METHOD BEFORE CULL FITNESSES)
+   for (int i = 0; i < puzzles_.size(); i++) {
+      cout << "Puzzle fitness before cull: " << fitness.howFit(*puzzles_[i]) << endl;
+   }
+   // Bubble sort the vector of Sudoku Puzzles by fitness value
+   int tempSize = 0;
+   // While the number of Sudoku puzzles to remove has not been met, sort the vector
+   while (tempSize < numToRemove) {
+      // For the number of Sudoku puzzles, sort the vector
+      for (int j = 0; j < puzzles_.size() - 1; j++) {
+         if (j < 0) {
+            j = 0;
+         }
+         if (fitness.howFit(*puzzles_[j]) < fitness.howFit(*puzzles_[j + 1])) {
+            Sudoku temp = *puzzles_[j + 1];
+            *puzzles_[j + 1] = *puzzles_[j];
+            *puzzles_[j] = temp;
+         }
+      }
+      tempSize++;
+   }
+   // Erase the number of puzzles based on highest fitness values up until the specified percentage
+   puzzles_.erase(puzzles_.begin(), puzzles_.end() - numRemaining);
+   // DELETE LATER (TEST METHOD POP SIZE AFTER CULL)
+   cout << "Population size after cull: " << puzzles_.size();
+   // DELETE LATER (TEST METHOD FOR FITNESSES IN THE VECTOR AFTER CULL)
+   for (int i = 0; i < puzzles_.size(); i++) {
+      cout << "Puzzle fitness after cull: " << fitness.howFit(*puzzles_[i]) << endl;
    }
 }
 
@@ -87,7 +111,19 @@ void SudokuPopulation::cull(double percent) {
 * puzzles_ vector with the new set we generated.
 */
 void SudokuPopulation::newGeneration() {
-   // TODO
+   SudokuFactory creations = creations.getInstance();
+   int temp = 0;
+   vector<Sudoku*> newPuzzles;
+   for (int i = 0; i < size_; i++) {
+      creations.createPuzzle(*puzzles_[temp]);
+      temp++;
+      if (i >= puzzles_.size()) {
+         temp = 0;
+      }
+   }
+   for (int i = 0; i < newPuzzles.size(); i++) {
+      newPuzzles[i] = puzzles_[i];
+   }
 }
 
 /*
