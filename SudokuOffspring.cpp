@@ -10,7 +10,7 @@
 #include "SudokuOffspring.h"
 #include "Sudoku.h"
 
-const int MUTATION_PERCENT = 5;
+const int MUTATION_PERCENT = 2;
 
 /*
 * This singleton method returns the current instance of the class. Inside

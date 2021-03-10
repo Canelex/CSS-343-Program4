@@ -41,24 +41,30 @@ int main(int argc, char* argv[]) {
       << " and max generations of " << maxGens << "." << endl;
 
    cout << "Input a sudoku puzzle:";
-
-   cin >> sudoku;
+   
+   try {
+      cin >> sudoku;
+   } catch (runtime_error err) {
+      cout << "ERROR: Invalid sudoku input" << endl;
+      return -1;
+   }
 
    cout << "Processing your sudoku:" << endl;
    cout << sudoku << endl;
 
-   SudokuPopulation pop(sudoku, 500);
-   for (int i = 1; i <= 100; i++) {
+   SudokuPopulation pop(sudoku, popSize);
+   for (int i = 1; i <= maxGens; i++) {
       pop.cull(0.9);
       pop.newGeneration();
-      if (i % 1 == 0) {
-         cout << "Generation " << i << " Best Fitness: " << pop.bestFitness() << endl;
-      }
+      //if ((i < 100 ? i % 10 : i % 100) == 0) {
+      cout << "Generation completed " << i << endl;
+      //}
       
    }
 
    cout << "Best sudoku: " << endl;
    Puzzle* best = pop.bestIndividual();
    cout << *best << endl;
-   delete best; // Delete so valgrind does not yell at me.
+   cout << "Best fitness: " << pop.bestFitness() << endl;
+   //delete best; // Delete so valgrind does not yell at me.
 }

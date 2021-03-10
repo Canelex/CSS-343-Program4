@@ -21,16 +21,18 @@ SudokuPopulation::SudokuPopulation(Sudoku original, int size) {
    // Get the SudokuFactory
    SudokuFactory factory = factory.getInstance();
 
+   // Allocate size for array
+   size_ = size;
+   maxSize_ = size;
+   puzzles_ = new Sudoku*[size];
+
    // Create size random versions of original
    for (int i = 0; i < size; i++) {
       // Copy and fill sudoku with random solution
       Sudoku* copy = (Sudoku*)factory.fillPuzzle(original);
       // Add it to the generation
-      puzzles_.push_back(copy);
+      puzzles_[i] = copy;
    }
-
-   // Copy size
-   size_ = size;
 }
 
 /*
@@ -40,13 +42,12 @@ SudokuPopulation::SudokuPopulation(Sudoku original, int size) {
 */
 SudokuPopulation::~SudokuPopulation() {
    // Deallocate each pointer
-   for (int i = 0; i < puzzles_.size(); i++) {
+   for (int i = 0; i < size_; i++) {
       //cout << "Deallocated a puzzle" << endl;
       delete puzzles_[i];
    }
 
-   // Clear vector
-   puzzles_.clear();
+   delete[] puzzles_;
 }
 
 /*
@@ -60,35 +61,44 @@ void SudokuPopulation::cull(double percent) {
    // Get SudokuFitness singleton
    SudokuFitness fitness = fitness.getInstance();
 
-   // Calculate how many sudokus should be removed
-   int numToRemove = int(floor(size_ * percent));
-   int numRemaining = puzzles_.size() - numToRemove;
-
-   if (numToRemove >= puzzles_.size()) {
+   if (percent > 1) {
       throw runtime_error("Trying to cull more puzzles than there are.");
    }
 
-   // Bubble sort the vector of Sudoku Puzzles by fitness value
-   int tempSize = 0;
-
-   // While the number of Sudoku puzzles to remove has not been met, sort the vector
-   while (tempSize < puzzles_.size()) {
-      // For the number of Sudoku puzzles, sort the vector
-      for (int j = 0; j < puzzles_.size() - 1; j++) {
-         if (j < 0) {
-            j = 0;
-         }
-         if (fitness.howFit(*puzzles_[j]) < fitness.howFit(*puzzles_[j + 1])) {
-            Sudoku temp = *puzzles_[j + 1];
-            *puzzles_[j + 1] = *puzzles_[j];
-            *puzzles_[j] = temp;
-         }
-      }
-      tempSize++;
+   // Create a dynamic array of fitness scores
+   int* scores = new int[size_];
+   for (int i = 0; i < size_; i++) {
+      scores[i] = fitness.howFit(*puzzles_[i]);
    }
 
-   // Erase the number of puzzles based on highest fitness values up until the specified percentage
-   puzzles_.erase(puzzles_.begin(), puzzles_.end() - numRemaining);
+   // Calculate size after culling
+   int newSize = int(ceil(size_ * (1 - percent)));
+
+   // Delete scores with highest fitness
+   for (int i = size_ - 1; i >= newSize; i--) {
+      
+      // Find the index with the highest fitness score
+      int bestIndex = -1;
+      for (int j = 0; j <= i; j++) {
+         if (bestIndex == -1 || scores[j] > scores[bestIndex]) {
+            bestIndex = j;
+         }
+      }
+
+      // Delete bestIndex, moving element at i into slot
+      delete puzzles_[bestIndex];
+      puzzles_[bestIndex] = puzzles_[i];
+      puzzles_[i] = nullptr;
+
+      // Update parallel array scores
+      scores[bestIndex] = scores[i];
+   }
+
+   // Update size_ to newsize
+   size_ = newSize;
+
+   // deallocate dynamic array
+   delete[] scores;
 }
 
 /*
@@ -102,24 +112,22 @@ void SudokuPopulation::cull(double percent) {
 */
 void SudokuPopulation::newGeneration() {
    SudokuFactory creations = creations.getInstance();
-   int temp = 0;
-   vector<Sudoku*> newPuzzles;
-   for (int i = 0; i < size_; i++) {
-      Sudoku* copy = (Sudoku*) creations.createPuzzle(*puzzles_[temp]);
-      newPuzzles.push_back(copy);
 
-      temp++;
-      if (temp >= puzzles_.size()) {
-         temp = 0;
+   // This variable keeps track of puzzle we are cloning
+   int j = 0;
+
+   for (int i = size_; i < maxSize_; i++) {
+      // Create a new puzzle using one at j
+      Sudoku* copy = (Sudoku*) creations.createPuzzle(*puzzles_[j]);
+      puzzles_[i] = copy;
+
+      // If j moves out of bounds (previous generation portion at start
+      // of array), set it back to zero.
+      j++;
+      if (j >= size_) {
+         j = 0;
       }
    }
-
-   // Delete old puzzles
-   for (int i = 0; i < puzzles_.size(); i++) {
-      delete puzzles_[i];
-   }
-
-   puzzles_ = newPuzzles;
 }
 
 /*
@@ -157,7 +165,7 @@ Puzzle* SudokuPopulation::bestIndividual() const {
 */
 pair<int, int> SudokuPopulation::bestPuzzle() const {
    // Check that there is at least one puzzle
-   if (puzzles_.size() <= 0) {
+   if (size_ <= 0) {
       throw runtime_error("Tried to get best puzzle in empty population");
    }
 
@@ -169,7 +177,7 @@ pair<int, int> SudokuPopulation::bestPuzzle() const {
    int bestIndex = -1;
 
    // Use a for loop to calculate best score
-   for (int i = 0; i < puzzles_.size(); i++) {
+   for (int i = 0; i < size_; i++) {
       // Calculate score of current puzzle
       int score = fitness.howFit(*puzzles_[i]);
 

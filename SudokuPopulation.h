@@ -76,13 +76,19 @@ private:
    pair<int, int> bestPuzzle() const;
 
    /*
-   * This field stores all the puzzles that are part of the current generation.
+   * This field is a dynamic array of puzzle pointers.
    */
-   vector<Sudoku*> puzzles_;
+   Sudoku** puzzles_;
 
    /*
    * This field stores all the puzzles that are part of the current generation.
    */
    int size_;
+
+   /*
+   * This field stores the maximum number of puzzles that can be part of the
+   * current generation.
+   */
+   int maxSize_;
 };
 
