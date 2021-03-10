@@ -2,7 +2,7 @@
 #include <string>
 #include "Sudoku.h"
 #include "Fitness.h"
-#include "SudokuFitness.h";
+#include "SudokuFitness.h"
 #include "SudokuPopulation.h"
 
 using namespace std;
@@ -52,14 +52,16 @@ int main(int argc, char* argv[]) {
    cout << "Processing your sudoku:" << endl;
    cout << sudoku << endl;
 
+   // Use random seed
+   srand(time(0));
    SudokuPopulation pop(sudoku, popSize);
    for (int i = 1; i <= maxGens; i++) {
       pop.cull(0.9);
       pop.newGeneration();
-      //if ((i < 100 ? i % 10 : i % 100) == 0) {
-      cout << "Generation completed " << i << endl;
-      //}
-      
+
+      if (i % (maxGens / 10) == 0) {
+         cout << "Percent done: " << (100 * i / maxGens) << "%" << endl;
+      }
    }
 
    cout << "Best sudoku: " << endl;

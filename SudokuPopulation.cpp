@@ -75,23 +75,31 @@ void SudokuPopulation::cull(double percent) {
    int newSize = int(ceil(size_ * (1 - percent)));
 
    // Delete scores with highest fitness
-   for (int i = size_ - 1; i >= newSize; i--) {
+   for (int i = 0; i < newSize; i++) {
       
-      // Find the index with the highest fitness score
-      int bestIndex = -1;
-      for (int j = 0; j <= i; j++) {
-         if (bestIndex == -1 || scores[j] > scores[bestIndex]) {
+      // Find the index with the lowest fitness score
+      int bestIndex = i;
+      for (int j = i + 1; j < size_; j++) {
+         if (scores[j] < scores[bestIndex]) {
             bestIndex = j;
          }
       }
 
-      // Delete bestIndex, moving element at i into slot
-      delete puzzles_[bestIndex];
-      puzzles_[bestIndex] = puzzles_[i];
-      puzzles_[i] = nullptr;
+      // Swap index i with best index in rest of array
+      Sudoku* tempPz = puzzles_[i];
+      puzzles_[i] = puzzles_[bestIndex];
+      puzzles_[bestIndex] = tempPz;
 
       // Update parallel array scores
-      scores[bestIndex] = scores[i];
+      int tempScore = scores[i];
+      scores[i] = scores[bestIndex];
+      scores[bestIndex] = tempScore;
+   }
+
+   // Clear rest of array
+   for (int i = newSize; i < size_; i++) {
+      delete puzzles_[i];
+      puzzles_[i] = nullptr;
    }
 
    // Update size_ to newsize
@@ -99,6 +107,12 @@ void SudokuPopulation::cull(double percent) {
 
    // deallocate dynamic array
    delete[] scores;
+
+   /*cout << "after cull:" << endl;
+   for (int i = 0; i < maxSize_; i++) {
+      cout << (puzzles_[i] != nullptr ? fitness.howFit(*puzzles_[i]) : -1) << " ";
+   }
+   cout << endl;*/
 }
 
 /*
@@ -128,6 +142,16 @@ void SudokuPopulation::newGeneration() {
          j = 0;
       }
    }
+
+   // Set size back to max size
+   size_ = maxSize_;
+
+   /*SudokuFitness fitness = fitness.getInstance();
+   cout << "after newgen:" << endl;
+   for (int i = 0; i < maxSize_; i++) {
+      cout << (puzzles_[i] != nullptr ? fitness.howFit(*puzzles_[i]) : -1) << " ";
+   }
+   cout << endl;*/
 }
 
 /*
