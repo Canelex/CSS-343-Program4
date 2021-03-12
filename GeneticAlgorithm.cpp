@@ -55,13 +55,17 @@ int main(int argc, char* argv[]) {
    // Use random seed
    srand(time(0));
    SudokuPopulation pop(sudoku, popSize);
-   for (int i = 1; i <= maxGens; i++) {
+   for (int i = 1; i <= maxGens && pop.bestFitness() != 0; i++) {
       pop.cull(0.9);
       pop.newGeneration();
 
-      if (i % (maxGens / 10) == 0) {
-         cout << "Percent done: " << (100 * i / maxGens) << "%" << endl;
-      }
+      /*
+      * For bigger populations, this helps the user understand how much time
+      * is remaining before an output is printed.
+      */
+      //if (i % (maxGens / 10) == 0) {
+      //   cout << "Percent done: " << (100 * i / maxGens) << "%" << endl;
+      //}
    }
 
    cout << "Best sudoku: " << endl;
